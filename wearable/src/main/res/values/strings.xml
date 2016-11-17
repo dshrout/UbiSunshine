@@ -1,4 +1,13 @@
-<resources>
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="http://schemas.android.com/tools">
+
+    <!-- Time format [CHAR LIMIT=NONE] -->
+    <string name="format_wear_friendly_time"><xliff:g id="hour">%1$d</xliff:g>:<xliff:g id="minute">%2$02d</xliff:g></string>
+
+    <!-- Date format [CHAR LIMIT=NONE] -->
+    <string name="format_wear_friendly_date"><xliff:g id="dow">%1$Ta</xliff:g>, <xliff:g id="month">%2$Tb</xliff:g> <xliff:g id="day">%3$Td</xliff:g> <xliff:g id="year">%4$TY</xliff:g></string>
+
+
     <string name="app_name">Wearable</string>
     <string name="message">Watch face tapped</string>
     <string name="my_digital_name">My Digital</string>

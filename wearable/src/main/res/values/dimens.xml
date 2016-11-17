@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="digital_text_size">40dp</dimen>
-    <dimen name="digital_text_size_round">45dp</dimen>
-    <dimen name="digital_x_offset">15dp</dimen>
-    <dimen name="digital_x_offset_round">25dp</dimen>
-    <dimen name="digital_y_offset">90dp</dimen>
+    <dimen name="digital_text_size_time">40dp</dimen>
+    <dimen name="digital_text_size_date">12dp</dimen>
+    <dimen name="digital_text_size_temperature">24dp</dimen>
+    <dimen name="digital_text_temperature_spacer">15dp</dimen>
+
+    <dimen name="digital_y_offset_time">90dp</dimen>
+    <dimen name="digital_y_offset_date">110dp</dimen>
+    <dimen name="digital_y_offset_separator">125dp</dimen>
+    <dimen name="digital_y_offset_weather_icon">126dp</dimen>
+    <dimen name="digital_y_offset_temperature">155dp</dimen>
+
+    <dimen name="separator_length">50dp</dimen>
 </resources>

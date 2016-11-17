@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background">#000000</color>
-    <color name="digital_text">#ffffff</color>
+    <color name="digital_text_ambient">#ffffff</color>
+
+    <color name="background">#1ca8f4</color>
+    <color name="digital_text_time">#ffffff</color>
+    <color name="digital_text_date">#bbe5fb</color>
+    <color name="digital_text_separator">#60c2f7</color>
+    <color name="digital_text_temperature_high">#ffffff</color>
+    <color name="digital_text_temperature_low">#bbe5fb</color>
 </resources>
