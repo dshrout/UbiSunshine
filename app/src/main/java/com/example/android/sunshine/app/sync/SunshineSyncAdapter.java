@@ -69,7 +69,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter implements
             "com.example.android.sunshine.app.ACTION_DATA_UPDATED";
     // Interval at which to sync with the weather, in seconds.
     // 60 seconds (1 minute) * 180 = 3 hours
-    public static final int SYNC_INTERVAL = 60 * 180;
+    public static final int SYNC_INTERVAL = 60;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
     private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
     private static final int WEATHER_NOTIFICATION_ID = 3004;
@@ -106,9 +106,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter implements
     public SunshineSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
         googleApiClient = new GoogleApiClient.Builder(context)
+                .addApi(Wearable.API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
-                .addApi(Wearable.API)
                 .build();
     }
 
@@ -133,8 +133,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter implements
             // Construct the URL for the OpenWeatherMap query
             // Possible parameters are avaiable at OWM's forecast API page, at
             // http://openweathermap.org/API#forecast
-            final String FORECAST_BASE_URL =
-                    "http://api.openweathermap.org/data/2.5/forecast/daily?";
+            final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?";
             final String QUERY_PARAM = "q";
             final String FORMAT_PARAM = "mode";
             final String UNITS_PARAM = "units";
@@ -206,14 +205,12 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter implements
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/wearable_data");
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/weather_data");
 
         putDataMapReq.getDataMap().putString("HIGH_TEMP", String.valueOf(Math.round(todaysHigh)));
         putDataMapReq.getDataMap().putString("LOW_TEMP", String.valueOf(Math.round(todaysLow)));
         putDataMapReq.getDataMap().putInt("WEATHER_ID", weatherId);
 
-        putDataMapReq.getDataMap().putLong("Time", System.currentTimeMillis());
-        putDataMapReq.getDataMap().putString("TT", String.valueOf(new Date().getTime()));
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
         Wearable.DataApi.putDataItem(googleApiClient, putDataReq)
                 .setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
@@ -229,7 +226,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter implements
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        Log.d("Connection", "Suspended");
     }
 
     @Override
@@ -244,10 +241,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter implements
      * Fortunately parsing is easy:  constructor takes the JSON string and converts it
      * into an Object hierarchy for us.
      */
-    private void getWeatherDataFromJson(String forecastJsonStr,
-                                        String locationSetting)
-            throws JSONException {
-
+    private void getWeatherDataFromJson(String forecastJsonStr, String locationSetting) throws JSONException {
         // Now we have a String representing the complete forecast in JSON Format.
         // Fortunately parsing is easy:  constructor takes the JSON string and converts it
         // into an Object hierarchy for us.

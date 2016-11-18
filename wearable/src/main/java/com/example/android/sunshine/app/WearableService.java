@@ -117,8 +117,8 @@ public class WearableService extends CanvasWatchFaceService {
         boolean mAmbient;
         Calendar mCalendar;
 
-        String highTemperature = "74";
-        String lowTemperature = "55";
+        String highTemperature = "102";
+        String lowTemperature = "85";
         int weatherId = 800;
 
         boolean mLowBitAmbient;
@@ -199,9 +199,6 @@ public class WearableService extends CanvasWatchFaceService {
             if (visible) {
                 registerReceiver();
 
-                // Connect for receiving message from mobile
-                googleApiClient.connect();
-
                 // Update time zone in case it changed while we weren't visible.
                 mCalendar.setTimeZone(TimeZone.getDefault());
                 invalidate();
@@ -215,6 +212,11 @@ public class WearableService extends CanvasWatchFaceService {
         }
 
         private void registerReceiver() {
+            // Connect for receiving message from mobile
+            if (googleApiClient != null && !googleApiClient.isConnected()) {
+                googleApiClient.connect();
+            }
+
             if (mRegisteredTimeZoneReceiver) {
                 return;
             }
@@ -439,7 +441,7 @@ public class WearableService extends CanvasWatchFaceService {
         }
 
         private void processConfigurationFor(DataItem item) {
-            if ("/wearable_data".equals(item.getUri().getPath())) {
+            if ("/weather_data".equals(item.getUri().getPath())) {
                 DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                 if (dataMap.containsKey("HIGH_TEMP"))
                     highTemperature = dataMap.getString("HIGH_TEMP");
@@ -452,7 +454,7 @@ public class WearableService extends CanvasWatchFaceService {
 
         @Override
         public void onConnectionSuspended(int i) {
-            Log.d("Connection","Fail");
+            Log.d("Connection","Suspended");
         }
 
         @Override
