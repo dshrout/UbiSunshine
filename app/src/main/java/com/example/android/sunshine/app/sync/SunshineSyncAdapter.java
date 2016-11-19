@@ -205,33 +205,37 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter implements
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/weather_data");
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/weather_data").setUrgent();
+
+        if (!Utility.isMetric(getContext())) {
+            todaysHigh = (todaysHigh * 1.8) + 32;
+            todaysLow = (todaysLow * 1.8) + 32;
+        }
 
         putDataMapReq.getDataMap().putString("HIGH_TEMP", String.valueOf(Math.round(todaysHigh)));
         putDataMapReq.getDataMap().putString("LOW_TEMP", String.valueOf(Math.round(todaysLow)));
         putDataMapReq.getDataMap().putInt("WEATHER_ID", weatherId);
 
-        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
         Wearable.DataApi.putDataItem(googleApiClient, putDataReq)
                 .setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
                     @Override
                     public void onResult(@NonNull DataApi.DataItemResult dataItemResult) {
-                        Log.d("onConnected:putDataItem", dataItemResult.toString());
+                        Log.d(">>>onResult:putDataItem", dataItemResult.toString());
+                        // disconnect and wait for the next round
+                        googleApiClient.disconnect();
                     }
                 });
-
-        // disconnect and wait for the next round
-        googleApiClient.disconnect();
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.d("Connection", "Suspended");
+        Log.d(">>>>> Connection", "Suspended");
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d("Connection", "Failed" + connectionResult.toString());
+        Log.d(">>>>> Connection", "Failed" + connectionResult.toString());
     }
 
     /**
@@ -365,9 +369,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter implements
                 low = temperatureObject.getDouble(OWM_MIN);
 
                 if(i==0){
-                    todaysHigh =high;
-                    todaysLow =low;
-                    this.weatherId =weatherId;
+                    todaysHigh = high;
+                    todaysLow = low;
+                    this.weatherId = weatherId;
                 }
 
                 ContentValues weatherValues = new ContentValues();
@@ -401,9 +405,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter implements
                 updateWidgets();
                 updateMuzei();
                 notifyWeather();
+                Log.d(">>>>>" + LOG_TAG, "googleApiClient.connect()");
                 googleApiClient.connect();  // send data to the wearable in the 'onConnected' callback (above)
             }
-            Log.d(LOG_TAG, "Sync Complete. " + cVVector.size() + " Inserted");
             setLocationStatus(getContext(), LOCATION_STATUS_OK);
 
         } catch (JSONException e) {

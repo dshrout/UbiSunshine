@@ -64,7 +64,7 @@ public class WearableService extends CanvasWatchFaceService {
     private static final Typeface NORMAL_TYPEFACE =
             Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL);
 
-    public final String LOG_TAG = WearableService.class.getSimpleName();
+    public final String LOG_TAG = ">>>>> " + WearableService.class.getSimpleName();
 
     /**
      * Update rate in milliseconds for interactive mode. We update once a second since seconds are
@@ -178,7 +178,6 @@ public class WearableService extends CanvasWatchFaceService {
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .build();
-            googleApiClient.connect();
         }
 
         @Override
@@ -216,10 +215,8 @@ public class WearableService extends CanvasWatchFaceService {
 
         private void registerReceiver() {
             // Connect for receiving message from mobile
-            if (googleApiClient != null && !googleApiClient.isConnected()) {
-                Log.d(LOG_TAG, "googleApiClient.connect");
-                googleApiClient.connect();
-            }
+            Log.d(LOG_TAG, "googleApiClient.connect");
+            googleApiClient.connect();
 
             if (mRegisteredTimeZoneReceiver) {
                 return;
@@ -238,6 +235,7 @@ public class WearableService extends CanvasWatchFaceService {
 
             // Disconnect client which was used for receiving message from mobile
             if (googleApiClient != null && googleApiClient.isConnected()) {
+                Log.d(LOG_TAG, "googleApiClient.disconnect");
                 googleApiClient.disconnect();
             }
         }
@@ -430,7 +428,7 @@ public class WearableService extends CanvasWatchFaceService {
         @Override
         public void onConnected(@Nullable Bundle bundle) {
             Log.d(LOG_TAG, "onConnected");
-            Wearable.DataApi.addListener(googleApiClient, Engine.this);
+            Wearable.DataApi.addListener(googleApiClient, this);
         }
 
         @Override
@@ -448,6 +446,7 @@ public class WearableService extends CanvasWatchFaceService {
         }
 
         private void processConfigurationFor(DataItem item) {
+            Log.d(LOG_TAG, "processConfigurationFor(DataItem): " + item.toString());
             if ("/weather_data".equals(item.getUri().getPath())) {
                 DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                 if (dataMap.containsKey("HIGH_TEMP"))
@@ -466,7 +465,7 @@ public class WearableService extends CanvasWatchFaceService {
 
         @Override
         public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-            Log.d(LOG_TAG,"onConnectionFailed: " + connectionResult.getErrorMessage());
+            Log.d(LOG_TAG, "onConnectionFailed: " + connectionResult.getErrorMessage());
         }
     }
 }
