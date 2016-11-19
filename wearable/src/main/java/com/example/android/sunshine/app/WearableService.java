@@ -64,6 +64,8 @@ public class WearableService extends CanvasWatchFaceService {
     private static final Typeface NORMAL_TYPEFACE =
             Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL);
 
+    public final String LOG_TAG = WearableService.class.getSimpleName();
+
     /**
      * Update rate in milliseconds for interactive mode. We update once a second since seconds are
      * displayed in interactive mode.
@@ -176,6 +178,7 @@ public class WearableService extends CanvasWatchFaceService {
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .build();
+            googleApiClient.connect();
         }
 
         @Override
@@ -214,6 +217,7 @@ public class WearableService extends CanvasWatchFaceService {
         private void registerReceiver() {
             // Connect for receiving message from mobile
             if (googleApiClient != null && !googleApiClient.isConnected()) {
+                Log.d(LOG_TAG, "googleApiClient.connect");
                 googleApiClient.connect();
             }
 
@@ -283,6 +287,7 @@ public class WearableService extends CanvasWatchFaceService {
          */
         @Override
         public void onTapCommand(int tapType, int x, int y, long eventTime) {
+            Log.d(LOG_TAG, "onTapCommand");
             switch (tapType) {
                 case TAP_TYPE_TOUCH:
                     // The user has started touching the screen.
@@ -424,11 +429,13 @@ public class WearableService extends CanvasWatchFaceService {
 
         @Override
         public void onConnected(@Nullable Bundle bundle) {
+            Log.d(LOG_TAG, "onConnected");
             Wearable.DataApi.addListener(googleApiClient, Engine.this);
         }
 
         @Override
         public void onDataChanged(DataEventBuffer dataEvents) {
+            Log.d(LOG_TAG, "onDataChanged");
             for (DataEvent event : dataEvents) {
                 if (event.getType() == DataEvent.TYPE_CHANGED) {
                     DataItem item = event.getDataItem();
@@ -454,12 +461,12 @@ public class WearableService extends CanvasWatchFaceService {
 
         @Override
         public void onConnectionSuspended(int i) {
-            Log.d("Connection","Suspended");
+            Log.d(LOG_TAG, "onConnectionSuspended");
         }
 
         @Override
         public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-            Log.d("Connection","Fail" + connectionResult.getErrorMessage());
+            Log.d(LOG_TAG,"onConnectionFailed: " + connectionResult.getErrorMessage());
         }
     }
 }

@@ -11,7 +11,7 @@ public class SunshineSyncService extends Service {
 
     @Override
     public void onCreate() {
-        Log.d("SunshineSyncService", "onCreate - SunshineSyncService");
+        Log.v("SunshineSyncService", "onCreate - SunshineSyncService");
         synchronized (sSyncAdapterLock) {
             if (sSunshineSyncAdapter == null) {
                 sSunshineSyncAdapter = new SunshineSyncAdapter(getApplicationContext(), true);
